@@ -17,5 +17,7 @@ Enhances memory and sequencing skills.
 # Tic Tac Toe: 
 The classic Xs and Os game.
 Includes two versions:
-# Tic Tac Toe: Basic version for one or two players.
-# TicTacToe PvP:Player-vs-Player enhanced version.
+# Tic Tac Toe:
+Basic version for one or two players.
+# TicTacToe PvP:
+Player-vs-Player enhanced version.
