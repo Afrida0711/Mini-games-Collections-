@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe - AI Block</title>
+  <style>
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      grid-template-rows: repeat(3, 80px);
+      gap: 5px;
+      margin: 20px auto;
+      justify-content: center;
+    }
+    .cell {
+      background: #eee;
+      font-size: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 1px solid #aaa;
+    }
+    .controls {
+      text-align: center;
+      margin: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: gray;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #0056b3;
+    }
+    .disabled {
+      background: #aaa;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    h2, p { text-align: center; }
+  </style>
+</head>
+<body>
+  <h2>Tic Tac Toe vs AI</h2>
+  <div id="board"></div>
+  <p id="status"></p>
+  <div class="controls">
+    <button id="startBtn">Start</button>
+    <button id="restartBtn" disabled>Restart</button>
+  </div>
+
+  <script>
+    const board = document.getElementById("board");
+    const status = document.getElementById("status");
+    const startBtn = document.getElementById("startBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    let cells = Array(3).fill(null).map(() => Array(3).fill(null));
+    let gameOver = false;
+
+    function createBoard() {
+      board.innerHTML = "";
+      for (let y = 0; y < 3; y++) {
+        for (let x = 0; x < 3; x++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          cell.dataset.x = x;
+          cell.dataset.y = y;
+          cell.addEventListener("click", () => playerMove(x, y));
+          board.appendChild(cell);
+        }
+      }
+    }
+
+    function playerMove(x, y) {
+      if (gameOver || cells[y][x]) return;
+      cells[y][x] = "X";
+      updateCell(x, y, "X");
+      if (checkWin("X")) return;
+      setTimeout(aiMove, 300);
+    }
+
+    function aiMove() {
+      let move = getBestMove("O") || getBestMove("X") || getFirstEmpty();
+      if (!move) return;
+      const [x, y] = move;
+      cells[y][x] = "O";
+      updateCell(x, y, "O");
+      checkWin("O");
+    }
+
+    function getBestMove(symbol) {
+      for (let y = 0; y < 3; y++) {
+        for (let x = 0; x < 3; x++) {
+          if (!cells[y][x]) {
+            cells[y][x] = symbol;
+            const win = checkWin(symbol, true);
+            cells[y][x] = null;
+            if (win) return [x, y];
+          }
+        }
+      }
+      return null;
+    }
+
+    function getFirstEmpty() {
+      for (let y = 0; y < 3; y++) {
+        for (let x = 0; x < 3; x++) {
+          if (!cells[y][x]) return [x, y];
+        }
+      }
+      return null;
+    }
+
+    function updateCell(x, y, symbol) {
+      const cell = board.querySelector(`[data-x='${x}'][data-y='${y}']`);
+      if (cell) cell.textContent = symbol;
+    }
+
+    function checkWin(symbol, dryRun = false) {
+      const wins = [
+        [[0,0],[0,1],[0,2]], [[1,0],[1,1],[1,2]], [[2,0],[2,1],[2,2]],
+        [[0,0],[1,0],[2,0]], [[0,1],[1,1],[2,1]], [[0,2],[1,2],[2,2]],
+        [[0,0],[1,1],[2,2]], [[0,2],[1,1],[2,0]]
+      ];
+      for (let combo of wins) {
+        if (combo.every(([x, y]) => cells[y][x] === symbol)) {
+          if (!dryRun) {
+            combo.forEach(([x, y]) => {
+              board.querySelector(`[data-x='${x}'][data-y='${y}']`).style.background = "yellow";
+            });
+            status.textContent = `${symbol} Wins!`;
+            gameOver = true;
+          }
+          return true;
+        }
+      }
+      if (!dryRun && cells.flat().every(c => c)) {
+        status.textContent = "Draw!";
+        gameOver = true;
+      }
+      return false;
+    }
+
+    startBtn.addEventListener("click", () => {
+      createBoard();
+      board.style.pointerEvents = "auto";
+      startBtn.disabled = true;
+      restartBtn.disabled = false;
+    });
+
+    restartBtn.addEventListener("click", () => {
+      // Reset game state
+      cells = Array(3).fill(null).map(() => Array(3).fill(null));
+      gameOver = false;
+      status.textContent = "";
+
+      // Recreate board
+      createBoard();
+    });
+  </script>
+</body>
+</html>

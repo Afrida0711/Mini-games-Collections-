@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe - Player vs Player</title>
+  <style>
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      grid-template-rows: repeat(3, 80px);
+      gap: 5px;
+      margin: 20px auto;
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .cell {
+      background: #eee;
+      font-size: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 1px solid #aaa;
+    }
+    h2, p { text-align: center; }
+  </style>
+</head>
+<body>
+  <h2>Tic Tac Toe - Player vs Player</h2>
+  <div id="board"></div>
+  <p id="status"></p>
+
+  <script>
+    const board = document.getElementById("board");
+    const status = document.getElementById("status");
+    let cells = Array(3).fill(null).map(() => Array(3).fill(null));
+    let gameOver = false;
+
+    function createBoard() {
+      let currentPlayer = "X";
+      board.innerHTML = "";
+      for (let y = 0; y < 3; y++) {
+        for (let x = 0; x < 3; x++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          cell.dataset.x = x;
+          cell.dataset.y = y;
+          cell.addEventListener("click", () => handleClick(x, y));
+          board.appendChild(cell);
+        }
+      }
+    }
+
+    function playerMove(x, y) {
+      if (gameOver || cells[y][x]) return;
+      cells[y][x] = "X";
+      updateCell(x, y, "X");
+      if (checkWin("X")) return;
+    }
+    let currentPlayer='X'
+    function handleClick(x, y) {
+     if (gameOver || cells[y][x]) return;
+     cells[y][x] = currentPlayer;
+     updateCell(x, y, currentPlayer);
+     if (checkWin(currentPlayer)) return;
+     currentPlayer = currentPlayer === "X" ? "O" : "X";
+}
+    function updateCell(x, y, symbol) {
+      const cell = board.querySelector(`[data-x='${x}'][data-y='${y}']`);
+      if (cell) cell.textContent = symbol;
+    }
+
+    function checkWin(symbol, dryRun = false) {
+      const wins = [
+        [[0,0],[0,1],[0,2]], [[1,0],[1,1],[1,2]], [[2,0],[2,1],[2,2]],
+        [[0,0],[1,0],[2,0]], [[0,1],[1,1],[2,1]], [[0,2],[1,2],[2,2]],
+        [[0,0],[1,1],[2,2]], [[0,2],[1,1],[2,0]]
+      ];
+      for (let combo of wins) {
+        if (combo.every(([x, y]) => cells[y][x] === symbol)) {
+          if (!dryRun) {
+            combo.forEach(([x, y]) => {
+              board.querySelector(`[data-x='${x}'][data-y='${y}']`).style.background = "yellow";
+            });
+            status.textContent = `${symbol} Wins!`;
+            gameOver = true;
+          }
+          return true;
+        }
+      }
+      if (!dryRun && cells.flat().every(c => c)) {
+        status.textContent = "Draw!";
+        gameOver = true;
+      }
+      return false;
+    }
+
+    createBoard();
+  </script>
+</body>
+</html>

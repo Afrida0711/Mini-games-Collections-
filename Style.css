@@ -1,0 +1,94 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+  }
+  h1 {
+    margin-top: 20px;
+  }
+  #board {
+    display: grid;
+    grid-template-columns: repeat(15, 30px);
+    grid-template-rows: repeat(15, 30px);
+    gap: 1px;
+    margin: 20px;
+  }
+  .cell {
+    width: 30px;
+    height: 30px;
+    background-color: #f7f5f2;
+    border: 1px solid #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .red {
+    background-color: red;
+    border-radius: 50%;
+    width: 60%;
+    height: 60%;
+  }
+  .green {
+    background-color: green;
+    border-radius: 50%;
+    width: 60%;
+    height: 60%;
+  }
+  .highlight {
+    border: 2px solid yellow;
+  }
+  #controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  #startBtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  #restartBtn {
+    background-color: #888;
+    color: white;
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    cursor: not-allowed;
+    border-radius: 4px;
+  }
+  #restartBtn:enabled {
+    background-color: #074ad1;
+    cursor: pointer;
+  }
+  #endScreen {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 40px;
+    border-radius: 10px;
+    color: white;
+    font-size: 36px;
+    text-align: center;
+    z-index: 10;
+  }
+  #endScreen button {
+    margin-top: 20px;
+    font-size: 18px;
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }

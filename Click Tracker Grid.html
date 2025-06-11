@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Click Tracker Grid</title>
+  <style>
+    #board {
+      display: grid;
+      grid-template-columns: repeat(6, 50px);
+      grid-template-rows: repeat(6, 50px);
+      gap: 4px;
+      margin: 20px auto;
+    }
+    .cell {
+      background: #ddd;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #999;
+      cursor: pointer;
+      user-select: none;
+    }
+    .controls {
+  text-align: center;
+  margin: 20px;
+}
+    button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+    .disabled {
+      background: #aaa;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    h2, p {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>Click Tracker Grid</h2>
+  <div id="board"></div>
+  <p>Total Clicks: <span id="clickCount">0</span></p>
+  <div class="controls">
+    <button id="startBtn">Start</button>
+    <button id="restartBtn" disabled>Restart</button>
+  </div>
+
+  <script>
+    const board = document.getElementById("board");
+    const clickDisplay = document.getElementById("clickCount");
+    const size=6;
+    const startBtn = document.getElementById("startBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    let totalClicks = 0;
+
+    function createBoard() {
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          cell.dataset.count = 0;
+          cell.textContent = "0";
+          cell.addEventListener("click", () => {
+            let count = parseInt(cell.dataset.count);
+            if (count < 5) {
+              count++;
+              cell.dataset.count = count;
+              cell.textContent = count;
+              totalClicks++;
+              clickDisplay.textContent = totalClicks;
+              if (count === 5) {
+                cell.classList.add("disabled");
+              }
+            }
+          });
+          board.appendChild(cell);
+        }
+      }
+    }
+    startBtn.addEventListener("click", () => {
+    totalClicks = 0;
+    clickDisplay.textContent = "0";
+    createBoard();
+    board.style.pointerEvents = "auto"; // Enable clicking
+    startBtn.disabled = true;
+    restartBtn.disabled = false;
+});
+    restartBtn.addEventListener("click", () => {
+    totalClicks = 0;
+    clickDisplay.textContent = "0";
+    board.innerHTML = "";
+    createBoard();
+});
+
+  </script>
+</body>
+</html>

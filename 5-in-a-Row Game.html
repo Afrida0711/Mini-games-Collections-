@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>5-in-a-Row Game</title>
+  <style>
+    #board {
+    position: relative;
+      display: grid;
+      grid-template-columns: repeat(10, 30px);
+      grid-template-rows: repeat(10, 30px);
+      gap: 2px;
+      margin: 20px auto;
+      justify-content: center;
+    }
+    .cell {
+      width: 30px;
+      height: 30px;
+      background: #eee;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    .red { background: red; }
+    .green { background: green; }
+    .highlight { border: 2px solid yellow; }
+  </style>
+</head>
+<body>
+  <h2 style="text-align: center;">5-in-a-Row Game</h2>
+  <div id="board"></div>
+  <p style="text-align: center;" id="status"></p>
+
+  <script>
+    const boardSize = 10;
+    const board = document.getElementById("board");
+    const status = document.getElementById("status");
+    let cells = [];
+    let currentPlayer = "red";
+    let gameOver = false;
+
+    function createBoard() {
+      board.innerHTML = "";
+      for (let y = 0; y < boardSize; y++) {
+        cells[y] = [];
+        for (let x = 0; x < boardSize; x++) {
+          const cell = document.createElement("div");
+          cell.classList.add("cell");
+          cell.dataset.x = x;
+          cell.dataset.y = y;
+          cell.addEventListener("click", () => handleClick(x, y));
+          board.appendChild(cell);
+          cells[y][x] = { element: cell, value: null };
+        }
+      }
+    }
+
+    function handleClick(x, y) {
+      if (gameOver) return;
+      const cell = cells[y][x];
+      if (cell.value) return;
+
+      cell.value = currentPlayer;
+      cell.element.classList.add(currentPlayer);
+
+      if (checkWin(x, y, currentPlayer)) {
+        status.textContent = `${currentPlayer.toUpperCase()} Wins!`;
+        gameOver = true;
+        return;
+      }
+
+      currentPlayer = currentPlayer === "red" ? "green" : "red";
+    }
+
+    function checkWin(x, y, player) {
+      const directions = [ [1,0], [0,1], [1,1], [1,-1] ];
+
+      for (const [dx, dy] of directions) {
+        let count = 1;
+        let line = [[x, y]];
+
+        for (let dir = -1; dir <= 1; dir += 2) {
+          let nx = x + dx * dir;
+          let ny = y + dy * dir;
+          while (
+            nx >= 0 && ny >= 0 && nx < boardSize && ny < boardSize &&
+            cells[ny][nx].value === player
+          ) {
+            line.push([nx, ny]);
+            count++;
+            nx += dx * dir;
+            ny += dy * dir;
+          }
+        }
+
+        if (count === 5) {
+          line.forEach(([lx, ly]) => cells[ly][lx].element.classList.add("highlight"));
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    createBoard();
+  </script>
+</body>
+</html>
